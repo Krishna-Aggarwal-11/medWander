@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Label, Select, Button, TextInput, Alert } from "flowbite-react";
 import { countriesData } from "./constant/data.js";
-import { useLocation } from "react-router-dom";
+import { useLocation , Link } from "react-router-dom";
 
 const Forms = () => {
   const location = useLocation();
@@ -10,7 +10,6 @@ const Forms = () => {
   const [countryCode, setCountryCode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [dailCode, setDailCode] = useState("");
-  const [phoneNumberwithCode, setPhoneNumberwithCode] = useState(""); 
   const [message , setMessage] = useState("");
   const [error , setError] = useState("");
 
@@ -36,7 +35,6 @@ const Forms = () => {
   }, []);
 
   const handleSubmit = async(e) => {
-    e.preventDefault();
     // fetching and saving data from server
     try  {
       const response = await fetch('http://localhost:3000/submit',
@@ -49,10 +47,11 @@ const Forms = () => {
             formType,
             name,
             countryCode,
-            phoneNumber: phoneNumberwithCode,
+            phoneNumber: dailCode + phoneNumber,
           }),
         });
       const data = await response.json();
+      console.log(data)      
       if (response.ok) {
 
         setMessage('Form submitted successfully');
@@ -65,7 +64,11 @@ const Forms = () => {
     } catch (error) {
       setError(error.message);
     }
+
+
   };
+
+
 
 
 
@@ -98,7 +101,9 @@ const Forms = () => {
               id="countries"
               required
               placeholder="Select your country"
+              options={countriesData}
               value={countryCode}
+              as ="div"
               onChange={(e) => {
                 setCountryCode(e.target.value),
                   setDailCode(
@@ -125,14 +130,13 @@ const Forms = () => {
               placeholder="Phone number"
               value={phoneNumber}
               onChange={(e) => {
-                setPhoneNumber(e.target.value),
-                  setPhoneNumberwithCode(dailCode + e.target.value);
+                setPhoneNumber(e.target.value)
               }}
             />
           </div>
           <Button
             gradientDuoTone={
-              formType === "Form A" ? "purpleToBlue" : "purpleToPink"
+              formType === "FormA" ? "purpleToBlue" : "purpleToPink"
             }
             type="submit"
             className="mt-4 mx-auto"
@@ -141,16 +145,9 @@ const Forms = () => {
           </Button>
         </form>
         <div className="mt-4 flex flex-wrap gap-4 ">
-          <a href="/">
+          <Link to="/">
             <Button gradientDuoTone="pinkToOrange">Go Back</Button>
-          </a>
-          <Button
-            gradientDuoTone={
-              formType === "Form A" ? "purpleToPink" : "purpleToBlue"
-            }
-          >
-            {formType === "Form A" ? "Form B" : "Form A"}
-          </Button>
+          </Link>
         </div>
       {error && <Alert color="failure" className="mt-4">{error}</Alert>}
       {message && <Alert color="success" className="mt-4">{message}</Alert>}

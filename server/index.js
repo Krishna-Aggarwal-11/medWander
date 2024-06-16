@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import XLSX from 'xlsx';
 import {Form , sequelize} from './model/Form.js';
 const app = express();
 const port = 3000;
@@ -11,9 +12,13 @@ app.use(express.json());
 
 
 // Routes
+
+// testing route
 app.get('/', (req, res) => {
   res.send('Welcome');
 });
+
+// Submit form
 
 app.post('/submit', async (req, res) => {
     const { formType, name, countryCode, phoneNumber } = req.body;
@@ -25,6 +30,17 @@ app.post('/submit', async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   });
+
+  // Get all form entries
+
+  app.get('/form', async (req, res) => {
+    try {
+        const entries = await Form.findAll();
+        res.status(200).json(entries);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 // Start server
 app.listen(port, () => {
