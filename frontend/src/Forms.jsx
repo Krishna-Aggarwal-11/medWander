@@ -35,6 +35,16 @@ const Forms = () => {
   }, []);
 
   const handleSubmit = async(e) => {
+    e.preventDefault();
+    if (!name || !countryCode || !phoneNumber) {
+      setError('Please fill in all the fields');
+    } 
+    if(phoneNumber.length < 10 || phoneNumber.length > 10) {
+      setError('Please enter a valid phone number');
+    }
+    if(!phoneNumber.isDigit()) {
+      setError('Please enter a valid phone number');
+    }
     // fetching and saving data from server
     try  {
       const response = await fetch('http://localhost:3000/submit',
@@ -53,7 +63,6 @@ const Forms = () => {
       const data = await response.json();
       console.log(data)      
       if (response.ok) {
-
         setMessage('Form submitted successfully');
         // saving data in local storage
         localStorage.setItem('name',data.name)
