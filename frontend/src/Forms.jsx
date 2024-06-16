@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { Label, Select , Button ,  TextInput  } from "flowbite-react";
 import { countriesData } from "./constant/data.js";
 
 
 const Forms = ({ formType }) => {
+
   const [name, setName] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [dailCode , setDailCode] = useState("")
   const [phoneNumberwithCode , setPhoneNumberwithCode] = useState("")
+
+  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({ name, countryCode, phoneNumberwithCode });
@@ -41,9 +45,9 @@ const Forms = ({ formType }) => {
               onChange={(e) => {setCountryCode(e.target.value) , setDailCode(countriesData.find((country) => country.code === e.target.value).dial_code)}}
             >
               {countriesData.map((country ) => (
-                <option key={country.dial_code}  value={country.code}>
+                <option key={country.name}  value={country.code}>
                   {country.name} |{" "}
-                  <span className="text-xs text-gray-200">{country.code} </span>
+                  {country.code} 
                 </option>
               ))}
             </Select>
@@ -54,11 +58,11 @@ const Forms = ({ formType }) => {
             </div>
             <TextInput id="phoneNumber"  required  placeholder={dailCode} value={ phoneNumber} onChange={(e) => {setPhoneNumber(e.target.value) , setPhoneNumberwithCode(dailCode + e.target.value)}}  />
           </div>
-          <Button gradientDuoTone="purpleToBlue" type="submit" className="mt-4 mx-auto">Submit</Button>
+          <Button gradientDuoTone={formType === "Form A" ? "purpleToBlue" : "purpleToPink"} type="submit" className="mt-4 mx-auto">Submit</Button>
         </form>
         <div className="mt-4 flex flex-wrap gap-4 ">
-        <Button gradientDuoTone="pinkToOrange">Go Back</Button>
-        <Button gradientDuoTone="purpleToPink">Form B</Button>
+        <a href="/"><Button gradientDuoTone="pinkToOrange">Go Back</Button></a>
+        <Button gradientDuoTone={formType === "Form A" ? "purpleToPink" : "purpleToBlue"}>{formType=== "Form A" ? "Form B" : "Form A"}</Button>
         </div>
       </div>
     </div>
