@@ -1,19 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { Label, Select, Button, TextInput, Alert } from "flowbite-react";
 import { countriesData } from "./constant/data.js";
+import { useLocation } from "react-router-dom";
 
-const Forms = ({ formType }) => {
+const Forms = () => {
+  const location = useLocation();
+  const [formType, setFormType] = useState("");
   const [name, setName] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [dailCode, setDailCode] = useState("");
   const [phoneNumberwithCode, setPhoneNumberwithCode] = useState(""); 
-
   const [message , setMessage] = useState("");
   const [error , setError] = useState("");
 
+  
+
+  useEffect(() => {
+     // fetching formtype from url 
+     const urlParams = new URLSearchParams(location.search)
+     const formType = urlParams.get('type')
+ 
+     setFormType(formType)
+  } , [location.form])
+
+  useEffect(() => {
+    // Load data from local storage if available
+    const savedName = localStorage.getItem('name');
+    const savedCountryCode = localStorage.getItem('countryCode');
+    const savedPhoneNumber = localStorage.getItem('phoneNumber');
+
+    if (savedName) setName(savedName);
+    if (savedCountryCode) setCountryCode(savedCountryCode);
+    if (savedPhoneNumber) setPhoneNumber(savedPhoneNumber);
+  }, []);
+
   const handleSubmit = async(e) => {
     e.preventDefault();
+    // fetching and saving data from server
     try  {
       const response = await fetch('http://localhost:3000/submit',
         {
@@ -29,11 +53,22 @@ const Forms = ({ formType }) => {
           }),
         });
       const data = await response.json();
-      setMessage('Form submitted successfully');
+      if (response.ok) {
+
+        setMessage('Form submitted successfully');
+        // saving data in local storage
+        localStorage.setItem('name',data.name)
+        localStorage.setItem('countryCode',data.countryCode)
+        localStorage.setItem('phoneNumber',data.phoneNumber)
+        localStorage.setItem('formType',formType)
+      }
     } catch (error) {
       setError(error.message);
     }
   };
+
+
+
   return (
     <div>
       <div className="flex flex-col items-center justify-center">
